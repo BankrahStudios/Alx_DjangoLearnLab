@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from .forms import PostCreationForm
 from .models import Post
@@ -60,15 +61,25 @@ class PostListView(ListView):
     context_object_name = 'posts'
     ordering = '-published_date'
 
-class PostUpdateView(UpdateView):
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostCreationForm
     success_url = reverse_lazy('list_posts')
-    template_name = 'blog/create_post.html'
+    template_name = 'blog/update_post.html'
     context_object_name = 'form'
 
-class PostDeleteView(DeleteView):
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'blog/blog_post.html'
+    template_name = 'blog/delete_post.html'
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
 
 # "POST", "method", "save()"
