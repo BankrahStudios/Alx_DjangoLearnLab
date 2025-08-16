@@ -1,0 +1,12 @@
+<!-- Template for a blog post -->
+
+{% extends 'blog/base.html' %}
+{% block title %} {{post.title}} {% endblock %}
+{% block content %}
+    <h1>{{post.title}}</h1>
+    <h4>{{ post.author|title }}</h4>
+    <p>{{ post.content }}</p>
+    <a href="{% url 'home' %}">
+        <button>Back to Home</button>
+    </a>
+{% endblock %}

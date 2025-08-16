@@ -1,0 +1,21 @@
+{% extends 'blog/base.html' %}
+{% block title %} Blog Posts {% endblock %}
+{% block content %}
+  <h1>Blog Posts</h1>
+  <ul>
+    <!-- <h2>Latest Blog Posts</h2> -->
+    {% for post in posts %}
+      <li>
+            <h4>{{ post.title|title }}</h4>
+            <p>
+                {{post.content|truncatewords:18}} <a href="{% url 'viewing_post' pk=post.id %}">Read More</a>
+            </p>
+            <h6>By: {{ post.author}}</h6>
+            <h6>{{ post.published_date}}</h6>
+      </li>
+    {% endfor %}
+    <a href="{% url 'home' %}">
+        <button>Back to Home</button>
+    </a>
+    </ul>
+{% endblock %}
