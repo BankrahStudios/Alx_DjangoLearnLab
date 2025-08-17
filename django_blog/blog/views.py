@@ -20,7 +20,7 @@ def home_view(request):
 class RegistrationView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
-    template_name = ''
+    template_name = 'blog/register.html'
 
 class UserProfileView(DetailView):
     model = User
@@ -29,9 +29,9 @@ class UserProfileView(DetailView):
     # posts = Post.objects.all().filter(author=self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['posts'] = Post.objects.all().filter(author=self.request.user).order_by('-published_date')
+        context = super(UserProfileView, self).get_context_data(**kwargs)
+        # show posts for the profile user (object) not always the logged-in user
+        context['posts'] = Post.objects.filter(author=self.object).order_by('-published_date')
         return context
 
 
@@ -39,15 +39,15 @@ class UserProfileView(DetailView):
     CRUD operations for blog posts
 '''
 
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     form_class = PostCreationForm
     success_url = reverse_lazy('list_posts')
     template_name = 'blog/create_post.html'
     context_object_name = 'form'
 
-    def form_valid(self, post):
-        post.instance.author = self.request.user
-        return super().form_valid(post)
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 # To get an individual blog post
 class PostDetailView(DetailView):
@@ -59,7 +59,7 @@ class PostListView(ListView):
     model = Post
     template_name = 'blog/list_posts.html'
     context_object_name = 'posts'
-    ordering = '-published_date'
+    ordering = ['-published_date']
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -77,6 +77,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'blog/delete_post.html'
+    success_url = reverse_lazy('list_posts')
 
     def test_func(self):
         post = self.get_object()
