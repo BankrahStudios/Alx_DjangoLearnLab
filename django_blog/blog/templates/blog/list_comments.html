@@ -1,0 +1,29 @@
+{% extends 'blog/base.html' %}
+{% block title %} Comments {% endblock %}
+{% block content %}
+  <h1>Comments</h1>
+      {% if comments %}
+      {% for comment in comments %}
+          <p>
+              {{comment.content}}
+          </p>
+          <h6>By: {{ comment.author }}</h6>
+          <h6>{{ comment.created_at }}</h6>
+      {% endfor %}
+      {% else %}
+        <p>Be the first to comment...</p>
+      {% endif %}
+      {% include "blog/create_comment.html" with form=form %}
+
+{% block form %}
+  <p> {% include "blog/create_comment.html" with form=form %} </p>
+{% endblock %}
+
+<p>  </p>
+<a href="{% url 'viewing_post' pk=post.id %}">
+    <button>Back to Post</button>
+</a>
+
+{% endblock %}
+
+{% include "blog/create_comment.html" with form=form %}

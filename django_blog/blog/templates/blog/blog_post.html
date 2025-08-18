@@ -6,10 +6,10 @@
     <h1>{{post.title}}</h1>
     <h4>{{ post.author|title }}</h4>
     <p>{{ post.content }}</p>
-    {% if user.is_authenticated and user == post.author %}
-        <a href="{% url 'update_post' pk=post.id %}"><button>Edit</button></a>
-    <a href="{% url 'delete_post' pk=post.id %}"><button>Delete</button></a>
-    {% endif %}
-    <a href="{% url 'list_posts' %}"><button>Back to Blog List</button></a>
-    <a href="{% url 'home' %}"><button>Back to Home</button></a>
+    <a href="{% url 'list_comments' pk=post.id %}">
+        <button>Comment {{comments|length}} </button>
+    </a>
+    <a href="{% url 'home' %}">
+        <button>Back to Home</button>
+    </a>
 {% endblock %}
